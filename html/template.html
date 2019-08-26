@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../js/vue.min.js"></script>
+    <style>
+        .class1{
+            background: #444;
+            color: #eee;
+        }
+    </style>
+    <title>Vue Template</title>
+</head>
+<body>
+<div id="app">
+    <div v-html="message"></div>
+    <label for="r1">修改颜色</label><input type="checkbox" v-model="use" id="r1">
+    <br><br>
+    <div v-bind:class="{'class1': use}">
+        v-bind:class 指令
+    </div>
+    {{5+5}}<br>
+    {{ ok ? 'YES' : 'NO' }}<br>
+    {{ message.split('').reverse().join('') }}
+    <div v-bind:id="'list-' + id">菜鸟教程</div>
+    <p v-if="seen">现在你看到我了</p>
+    <pre><a v-bind:href="url">菜鸟教程</a></pre>
+    <!--目前还不知道怎么使用-->
+    <!--<a v-on:click="doSomething">hello world</a>-->
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            message: 'RUNOOB',
+            use: false,
+            ok: true,
+            id: 1,
+            seen: true,
+            url: 'http://www.runoob.com'
+        }
+    })
+</script>
+
+</body>
+</html>

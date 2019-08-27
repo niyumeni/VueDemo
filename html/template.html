@@ -26,7 +26,72 @@
     <p v-if="seen">现在你看到我了</p>
     <pre><a v-bind:href="url">菜鸟教程</a></pre>
     <!--目前还不知道怎么使用-->
-    <!--<a v-on:click="doSomething">hello world</a>-->
+    <a v-on:click="doSomething+=100">hello world</a>
+    <div>{{doSomething}}</div>
+
+    <p v-if="seen">现在你看到我了</p>
+    <template v-if="ok">
+        <h1>菜鸟教程</h1>
+        <p>学的不仅是技术，更是梦想！</p>
+        <p>哈哈哈，打字辛苦啊！！！</p>
+    </template>
+
+    <div v-if="Math.random() > 0.5">
+        Sorry
+    </div>
+    <div v-else>
+        Not sorry
+    </div>
+
+    <div v-if="type === 'A'">
+        A
+    </div>
+    <div v-else-if="type === 'B'">
+        B
+    </div>
+    <div v-else-if="type === 'C'">
+        C
+    </div>
+    <div v-else>
+        Not A/B/C
+    </div>
+
+    <h1 v-show="ok">Hello!</h1>
+
+    <!--v-for 指令需要以 site in sites 形式的特殊语法， sites 是源数据数组并且 site 是数组元素迭代的别名。-->
+    <ol>
+        <li v-for="site in sites">
+            {{ site.name }}
+        </li>
+    </ol>
+
+    <template v-for="site in sites">
+        <li>{{ site.name }}</li>
+        <li>--------------</li>
+    </template>
+
+
+    <ul>
+        <li v-for="value in object">
+            {{ value }}
+        </li>
+    </ul>
+
+    <ul>
+        <li v-for="(value, key, index) in object">
+            {{ index }}. {{ key }} : {{ value }}
+        </li>
+    </ul>
+
+    <ul>
+        <li v-for="n in 10">
+            {{ n }}
+        </li>
+    </ul>
+
+
+
+
 </div>
 
 <script>
@@ -38,7 +103,19 @@
             ok: true,
             id: 1,
             seen: true,
-            url: 'http://www.runoob.com'
+            doSomething: 'hello world',
+            url: 'http://www.runoob.com',
+            type: 'C',
+            sites: [
+                { name: 'Runoob' },
+                { name: 'Google' },
+                { name: 'Taobao' }
+            ],
+            object: {
+                name: '菜鸟教程',
+                url: 'http://www.runoob.com',
+                slogan: '学的不仅是技术，更是梦想！'
+            }
         }
     })
 </script>

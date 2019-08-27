@@ -147,4 +147,129 @@ v-on 缩写
 <a @click="doSomething"></a>
 
 
+v-if 指令将根据表达式 seen 的值(true 或 false )来决定是否插入 p 元素。
+
+在字符串模板中，如 Handlebars ，我们得像这样写一个条件块：
+
+<!-- Handlebars 模板 -->
+{{#if ok}}
+  <h1>Yes</h1>
+{{/if}}
+
+
+反转字符串
+{{ message.split('').reverse().join('') }}
+
+计算属性关键词: computed
+我们可以使用 methods 来替代 computed，效果上两个都是一样的，但是 computed 是基于它的依赖缓存，
+只有相关依赖发生改变时才会重新取值。而使用 methods ，在重新渲染的时候，函数总会重新调用执行。
+
+可以说使用 computed 性能会更好，但是如果你不希望缓存，你可以使用 methods 属性。
+
+
+监听属性 watch，我们可以通过 watch 来响应数据的变化
+<div id = "app">
+    <p style = "font-size:25px;">计数器: {{ counter }}</p>
+    <button @click = "counter++" style = "font-size:25px;">点我</button>
+</div>
+<script type = "text/javascript">
+var vm = new Vue({
+    el: '#app',
+    data: {
+        counter: 1
+    }
+});
+vm.$watch('counter', function(nval, oval) {
+    alert('计数器值的变化 :' + oval + ' 变为 ' + nval + '!');
+});
+
+
+<div id = "computed_props">
+    千米 : <input type = "text" v-model = "kilometers">
+    米 : <input type = "text" v-model = "meters">
+</div>
+<p id="info"></p>
+<script type = "text/javascript">
+    var vm = new Vue({
+    el: '#computed_props',
+    data: {
+        kilometers : 0,
+        meters:0
+    },
+    methods: {
+    },
+    computed :{
+    },
+    watch : {
+        kilometers:function(val) {
+            this.kilometers = val;
+            this.meters = this.kilometers * 1000
+        },
+        meters : function (val) {
+            this.kilometers = val/ 1000;
+            this.meters = val;
+        }
+    }
+    });
+    // $watch 是一个实例方法
+    vm.$watch('kilometers', function (newValue, oldValue) {
+    // 这个回调将在 vm.kilometers 改变后调用
+    document.getElementById ("info").innerHTML = "修改前值为: " + oldValue + "，修改后值为: " + newValue;
+})
+</script>
+
+
+class 与 style 是 HTML 元素的属性，用于设置元素的样式，我们可以用 v-bind 来设置样式属性。
+Vue.js v-bind 在处理 class 和 style 时， 专门增强了它。表达式的结果类型除了字符串之外，还可以是对象或数组。
+
+
+static 属性是什么？
+
+
+绑定返回对象的计算属性
+new Vue({
+  el: '#app',
+  data: {
+    isActive: true,
+    error: {
+      value: true,
+      type: 'fatal'
+    }
+  },
+  computed: {
+    classObject: function () {
+      return {
+  base: true,
+        active: this.isActive && !this.error.value,
+        'text-danger': this.error.value && this.error.type === 'fatal',
+      }
+    }
+  }
+})
+
+
+<div v-bind:class="[activeClass, errorClass]"></div> === <div class="active text-danger"></div>
+
+errorClass 是始终存在的，isActive 为 true 时添加 activeClass 类：
+<div v-bind:class="[errorClass ,isActive ? activeClass : '']"></div>
+
+
+可以在 v-bind:style 直接设置样式：
+<div id="app">
+    <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">菜鸟教程</div>
+</div>
+===
+<div style="color: green; font-size: 30px;">菜鸟教程</div>
+
+对象方式
+<div id="app">
+  <div v-bind:style="styleObject">菜鸟教程</div>
+</div>
+
+对象数组方式
+<div id="app">
+  <div v-bind:style="[baseStyles, overridingStyles]">菜鸟教程</div>
+</div>
+
+
 

@@ -272,4 +272,435 @@ errorClass 是始终存在的，isActive 为 true 时添加 activeClass 类：
 </div>
 
 
+事件修饰符
+Vue.js 为 v-on 提供了事件修饰符来处理 DOM 事件细节，如：event.preventDefault() 或 event.stopPropagation()。
+
+Vue.js通过由点(.)表示的指令后缀来调用修饰符。
+
+.stop
+.prevent
+.capture
+.self
+.once
+<!-- 阻止单击事件冒泡 -->
+<a v-on:click.stop="doThis"></a>
+<!-- 提交事件不再重载页面 -->
+<form v-on:submit.prevent="onSubmit"></form>
+<!-- 修饰符可以串联  -->
+<a v-on:click.stop.prevent="doThat"></a>
+<!-- 只有修饰符 -->
+<form v-on:submit.prevent></form>
+<!-- 添加事件侦听器时使用事件捕获模式 -->
+<div v-on:click.capture="doThis">...</div>
+<!-- 只当事件在该元素本身（而不是子元素）触发时触发回调 -->
+<div v-on:click.self="doThat">...</div>
+
+<!-- click 事件只能点击一次，2.1.4版本新增 -->
+<a v-on:click.once="doThis"></a>
+
+<!-- 只有在 keyCode 是 13 时调用 vm.submit() -->
+<input v-on:keyup.13="submit">
+
+
+记住所有的 keyCode 比较困难，所以 Vue 为最常用的按键提供了别名：
+
+<!-- 同上 -->
+<input v-on:keyup.enter="submit">
+<!-- 缩写语法 -->
+<input @keyup.enter="submit">
+全部的按键别名：
+
+.enter
+.tab
+.delete (捕获 "删除" 和 "退格" 键)
+.esc
+.space
+.up
+.down
+.left
+.right
+.ctrl
+.alt
+.shift
+.meta
+实例
+
+<p><!-- Alt + C -->
+<input @keyup.alt.67="clear">
+<!-- Ctrl + Click -->
+<div @click.ctrl="doSomething">Do something</div>
+
+lazy
+在默认情况下， v-model 在 input 事件中同步输入框的值与数据，但你可以添加一个修饰符 lazy ，从而转变为在 change 事件中同步：
+<!-- 在 "change" 而不是 "input" 事件中更新 -->
+<input v-model.lazy="msg" >
+change 是啥？？？
+
+
+.number
+如果想自动将用户的输入值转为 Number 类型（如果原值的转换结果为 NaN 则返回原值），可以添加一个修饰符 number 给 v-model 来处理输入值：
+<input v-model.number="age" type="number">
+
+.trim
+如果要自动过滤用户输入的首尾空格，可以添加 trim 修饰符到 v-model 上过滤输入：
+<input v-model.trim="msg">
+
+
+
+组件可以扩展 HTML 元素，封装可重用的代码。
+组件系统让我们可以用独立可复用的小组件来构建大型应用，几乎任意类型的应用的界面都可以抽象为一个组件树：
+注册一个全局组件语法格式如下：
+Vue.component(tagName, options)
+tagName 为组件名，options 为配置选项。注册后，我们可以使用以下方式来调用组件：
+<tagName></tagName>
+
+prop 是父组件用来传递数据的一个自定义属性。
+父组件的数据需要通过 props 把数据传给子组件，子组件需要显式地用 props 选项声明 "prop"：
+
+Prop 实例
+<div id="app">
+    <child message="hello!"></child>
+</div>
+
+<script>
+// 注册
+Vue.component('child', {
+  // 声明 props
+  props: ['message'],
+  // 同样也可以在 vm 实例中像 "this.message" 这样使用
+  template: '<span>{{ message }}</span>'
+})
+// 创建根实例
+new Vue({
+  el: '#app'
+})
+</script>
+
+
+动态 Prop
+类似于用 v-bind 绑定 HTML 特性到一个表达式，也可以用 v-bind 动态绑定 props 的值到父组件的数据中。每当父组件的数据变化时，该变化也会传导给子组件：
+Prop 实例
+<div id="app">
+    <div>
+      <input v-model="parentMsg">
+      <br>
+      <child v-bind:message="parentMsg"></child>
+    </div>
+</div>
+
+<script>
+// 注册
+Vue.component('child', {
+  // 声明 props
+  props: ['message'],
+  // 同样也可以在 vm 实例中像 "this.message" 这样使用
+  template: '<span>{{ message }}</span>'
+})
+// 创建根实例
+new Vue({
+  el: '#app',
+  data: {
+    parentMsg: '父组件内容'
+  }
+})
+</script>
+
+
+将 v-bind 指令将 todo 传到每一个重复的组件中：
+
+Prop 实例
+<div id="app">
+    <ol>
+    <todo-item v-for="item in sites" v-bind:todo="item"></todo-item>
+      </ol>
+</div>
+
+<script>
+Vue.component('todo-item', {
+  props: ['todo'],
+  template: '<li>{{ todo.text }}</li>'
+})
+new Vue({
+  el: '#app',
+  data: {
+    sites: [
+      { text: 'Runoob' },
+      { text: 'Google' },
+      { text: 'Taobao' }
+    ]
+  }
+})
+</script>
+
+
+组件可以为 props 指定验证要求。
+为了定制 prop 的验证方式，你可以为 props 中的值提供一个带有验证需求的对象，而不是一个字符串数组。例如：
+Vue.component('my-component', {
+  props: {
+    // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
+    propA: Number,
+    // 多个可能的类型
+    propB: [String, Number],
+    // 必填的字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 带有默认值的数字
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 带有默认值的对象
+    propE: {
+      type: Object,
+      // 对象或数组默认值必须从一个工厂函数获取
+      default: function () {
+        return { message: 'hello' }
+      }
+    },
+    // 自定义验证函数
+    propF: {
+      validator: function (value) {
+        // 这个值必须匹配下列字符串中的一个
+        return ['success', 'warning', 'danger'].indexOf(value) !== -1
+      }
+    }
+  }
+})
+当 prop 验证失败的时候，(开发环境构建版本的) Vue 将会产生一个控制台的警告。
+type 可以是下面原生构造器：
+
+String
+Number
+Boolean
+Array
+Object
+Date
+Function
+Symbol
+type 也可以是一个自定义构造器，使用 instanceof 检测。
+
+
+自定义事件
+父组件是使用 props 传递数据给子组件，但如果子组件要把数据传递回去，就需要使用自定义事件！
+我们可以使用 v-on 绑定自定义事件, 每个 Vue 实例都实现了事件接口(Events interface)，即：
+使用 $on(eventName) 监听事件
+使用 $emit(eventName) 触发事件
+另外，父组件可以在使用子组件的地方直接用 v-on 来监听子组件触发的事件。
+
+以下实例中子组件已经和它外部完全解耦了。它所做的只是触发一个父组件关心的内部事件。
+
+实例
+<div id="app">
+    <div id="counter-event-example">
+      <p>{{ total }}</p>
+      <button-counter v-on:increment="incrementTotal"></button-counter>
+      <button-counter v-on:increment="incrementTotal"></button-counter>
+    </div>
+</div>
+
+<script>
+Vue.component('button-counter', {
+  template: '<button v-on:click="incrementHandler">{{ counter }}</button>',
+  data: function () {
+    return {
+      counter: 0
+    }
+  },
+  methods: {
+    incrementHandler: function () {
+      this.counter += 1
+      this.$emit('increment')
+    }
+  },
+})
+new Vue({
+  el: '#counter-event-example',
+  data: {
+    total: 0
+  },
+  methods: {
+    incrementTotal: function () {
+      this.total += 1
+    }
+  }
+})
+</script>
+
+可以看到 button-counter 组件中的 data 不是一个对象，而是一个函数：
+data: function () {
+  return {
+    count: 0
+  }
+}
+这样的好处就是每个实例可以维护一份被返回对象的独立的拷贝，如果 data 是一个对象则会影响到其他实例，如下所示：
+
+实例
+<div id="components-demo3" class="demo">
+    <button-counter2></button-counter2>
+    <button-counter2></button-counter2>
+    <button-counter2></button-counter2>
+</div>
+
+<script>
+var buttonCounter2Data = {
+  count: 0
+}
+Vue.component('button-counter2', {
+    /*
+    data: function () {
+        // data 选项是一个函数，组件不相互影响
+        return {
+            count: 0
+        }
+    },
+    */
+    data: function () {
+        // data 选项是一个对象，会影响到其他实例
+        return buttonCounter2Data
+    },
+    template: '<button v-on:click="count++">点击了 {{ count }} 次。</button>'
+})
+new Vue({ el: '#components-demo3' })
+</script>
+
+
+钩子
+钩子函数
+指令定义函数提供了几个钩子函数（可选）：
+
+bind: 只调用一次，指令第一次绑定到元素时调用，用这个钩子函数可以定义一个在绑定时执行一次的初始化动作。
+inserted: 被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于 document 中）。
+update: 被绑定元素所在的模板更新时调用，而不论绑定值是否变化。通过比较更新前后的绑定值，可以忽略不必要的模板更新（详细的钩子函数参数见下）。
+componentUpdated: 被绑定元素所在模板完成一次更新周期时调用。
+unbind: 只调用一次， 指令与元素解绑时调用。
+
+钩子函数参数
+钩子函数的参数有：
+
+el: 指令所绑定的元素，可以用来直接操作 DOM 。
+binding: 一个对象，包含以下属性：
+name: 指令名，不包括 v- 前缀。
+value: 指令的绑定值， 例如： v-my-directive="1 + 1", value 的值是 2。
+oldValue: 指令绑定的前一个值，仅在 update 和 componentUpdated 钩子中可用。无论值是否改变都可用。
+expression: 绑定值的表达式或变量名。 例如 v-my-directive="1 + 1" ， expression 的值是 "1 + 1"。
+arg: 传给指令的参数。例如 v-my-directive:foo， arg 的值是 "foo"。
+modifiers: 一个包含修饰符的对象。 例如： v-my-directive.foo.bar, 修饰符对象 modifiers 的值是 { foo: true, bar: true }。
+vnode: Vue 编译生成的虚拟节点。
+oldVnode: 上一个虚拟节点，仅在 update 和 componentUpdated 钩子中可用。
+以下实例演示了这些参数的使用：
+
+实例
+<div id="app"  v-runoob:hello.a.b="message">
+</div>
+
+<script>
+Vue.directive('runoob', {
+  bind: function (el, binding, vnode) {
+    var s = JSON.stringify
+    el.innerHTML =
+      'name: '       + s(binding.name) + '<br>' +
+      'value: '      + s(binding.value) + '<br>' +
+      'expression: ' + s(binding.expression) + '<br>' +
+      'argument: '   + s(binding.arg) + '<br>' +
+      'modifiers: '  + s(binding.modifiers) + '<br>' +
+      'vnode keys: ' + Object.keys(vnode).join(', ')
+  }
+})
+new Vue({
+  el: '#app',
+  data: {
+    message: '菜鸟教程!'
+  }
+})
+</script>
+
+
+不需要其他钩子函数，我们可以简写函数，如下格式：
+
+Vue.directive('runoob', function (el, binding) {
+  // 设置指令的背景颜色
+  el.style.backgroundColor = binding.value.color
+})
+
+<div id="app">
+    <div v-runoob="{ color: 'green', text: '菜鸟教程!' }"></div>
+</div>
+
+<script>
+Vue.directive('runoob', function (el, binding) {
+    // 简写方式设置文本及背景颜色
+    el.innerHTML = binding.value.text
+    el.style.backgroundColor = binding.value.color
+})
+new Vue({
+  el: '#app'
+})
+</script>
+
+
+<router-link> 相关属性
+接下来我们可以了解下更多关于 <router-link> 的属性。
+to
+表示目标路由的链接。 当被点击后，内部会立刻把 to 的值传到 router.push()，所以这个值可以是一个字符串或者是描述目标位置的对象。
+
+<!-- 字符串 -->
+<router-link to="home">Home</router-link>
+<!-- 渲染结果 -->
+<a href="home">Home</a>
+
+<!-- 使用 v-bind 的 JS 表达式 -->
+<router-link v-bind:to="'home'">Home</router-link>
+
+<!-- 不写 v-bind 也可以，就像绑定别的属性一样 -->
+<router-link :to="'home'">Home</router-link>
+
+<!-- 同上 -->
+<router-link :to="{ path: 'home' }">Home</router-link>
+
+<!-- 命名的路由 -->
+<router-link :to="{ name: 'user', params: { userId: 123 }}">User</router-link>
+
+<!-- 带查询参数，下面的结果为 /register?plan=private -->
+<router-link :to="{ path: 'register', query: { plan: 'private' }}">Register</router-link>
+
+
+设置 replace 属性的话，当点击时，会调用 router.replace() 而不是 router.push()，导航后不会留下 history 记录。
+<router-link :to="{ path: '/abc'}" replace></router-link>
+
+设置 append 属性后，则在当前 (相对) 路径前添加基路径。例如，我们从 /a 导航到一个相对路径 b，如果没有配置 append，则路径为 /b，如果配了，则为 /a/b
+<router-link :to="{ path: 'relative/path'}" append></router-link>
+
+有时候想要 <router-link> 渲染成某种标签，例如 <li>。 于是我们使用 tag prop 类指定何种标签，同样它还是会监听点击，触发导航。
+<router-link to="/foo" tag="li">foo</router-link>
+<!-- 渲染结果 -->
+<li>foo</li>
+
+
+设置 链接激活时使用的 CSS 类名。可以通过以下代码来替代。
+<style>
+   ._active{
+      background-color : red;
+   }
+</style>
+<p>
+   <router-link v-bind:to = "{ path: '/route1'}" active-class = "_active">Router Link 1</router-link>
+   <router-link v-bind:to = "{ path: '/route2'}" tag = "span">Router Link 2</router-link>
+</p>
+
+
+exact-active-class
+配置当链接被精确匹配的时候应该激活的 class。可以通过以下代码来替代。
+
+<p>
+   <router-link v-bind:to = "{ path: '/route1'}" exact-active-class = "_active">Router Link 1</router-link>
+   <router-link v-bind:to = "{ path: '/route2'}" tag = "span">Router Link 2</router-link>
+</p>
+
+
+event
+声明可以用来触发导航的事件。可以是一个字符串或是一个包含字符串的数组。
+
+<router-link v-bind:to = "{ path: '/route1'}" event = "mouseover">Router Link 1</router-link>
 

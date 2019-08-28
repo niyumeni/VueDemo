@@ -27,6 +27,17 @@
     <div id="app">
         <div v-bind:class="classObject"></div>
     </div>
+
+    <button v-on:click="counter += 1">增加 1</button>
+    <p>这个按钮被点击了 {{ counter }} 次。</p>
+
+    <!-- `greet` 是在下面定义的方法名 -->
+    <button v-on:click="greet">Greet</button>
+    <button v-on:click="say('hi')">Say hi</button>
+    <button v-on:click="say('what')">Say what</button>
+
+
+
 </div>
 
 
@@ -40,6 +51,7 @@
             url: 'http://www.google.com',
             isActive: true,
             hasError: true,
+            counter: 0,
             classObject: {
                 active: true,
                 'text-danger': true
@@ -64,6 +76,19 @@
                     this.url = names[names.length - 1]
                 }
             }
+        },
+        methods: {
+            greet: function (event) {
+                // `this` 在方法里指当前 Vue 实例
+                alert('Hello ' + this.name + '!')
+                // `event` 是原生 DOM 事件
+                if (event) {
+                    alert(event.target.tagName)
+                }
+            },
+            say: function (message) {
+                alert(message)
+            }
         }
     })
 
@@ -72,6 +97,8 @@
     document.write('name: ' + vm.name);
     document.write('<br>');
     document.write('url: ' + vm.url);
+    // 也可以用 JavaScript 直接调用方法
+    // app.greet() // -> 'Hello Vue.js!'
 </script>
 
 

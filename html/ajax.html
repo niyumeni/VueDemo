@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <title>Vue Ajax by Axios</title>
+</head>
+<body>
+
+<div id="app">
+    {{ info }}
+
+
+    <!--<h1>网站列表</h1>-->
+    <!--<div-->
+    <!--v-for="site in info"-->
+    <!--&gt;-->
+    <!--{{ site.name }}-->
+    <!--</div>-->
+
+
+</div>
+<script type="text/javascript">
+    // new Vue({
+    //     el: '#app',
+    //     data () {
+    //         return {
+    //             info: null
+    //         }
+    //     },
+    //     mounted () {
+    //         axios
+    //             .get('https://localhost:8443/orange', {
+    //                 params: {
+    //                     name: 'hello',
+    //                     des: 'world'
+    //                 }
+    //             })
+    //             .then(response => (this.info = response.data))
+    //             .catch(function (error) { // 请求失败处理
+    //                 console.log(error);
+    //             });
+    //     }
+    // })
+
+
+    // post 默认使用 application/json 数据设置那里必须用 params 不可以使用data
+    // 现在设置请求头没有效果
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                info: null
+            }
+        },
+        mounted() {
+            axios
+                // .interceptors.request.use(config => { // 目前测试没有效果
+                //     config.headers.contentType = 'application/x-www-form-urlencoded';
+                //     return config;
+                // },
+                // error => {
+                //     return Promise.reject(error);
+                // })
+                .post('https://localhost:8443/orange', {
+                    params: {
+                        name: 'hello',
+                        des: 'world'
+                    }
+                },{
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(response => (this.info = response.data))
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+            // axios({
+            //     method: "POST",
+            //     url: 'https://localhost:8443/orange',
+            //     data: {'name':'hello', 'des':'world'},
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded'
+            //     }
+            // }).then(function(res) {
+            //     console.log(res);
+            // });
+        }
+    })
+
+
+    // axios({
+    //     method:'POST',
+    //     url:'https://localhost:8443/orange',
+    //     headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded',//设置请求头请求格式为JSON
+    //     },
+    //     data:{'name':'hello', 'des':'world'}
+    // }).then((response)=>{})
+
+
+    // new Vue({
+    //     el: '#app',
+    //     data () {
+    //         return {
+    //             info: null
+    //         }
+    //     },
+    //     mounted () {
+    //         axios
+    //             .get('https://localhost:8443/orange')
+    //             .then(response => (this.info = response.data))
+    //             .catch(function (error) { // 请求失败处理
+    //                 console.log(error);
+    //             });
+    //     }
+    // })
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../js/axios.min.js"></script>
+    <title>AXIOS Demo</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    // axios.defaults.baseURL = 'https://localhost:8443';
+    // axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    // axios.post('/orange', {
+    //     name: 'hello',
+    //     des: 'world'
+    // })
+    //     .then(function (response) {
+    //         console.log(response);
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     });
+
+    // 仍然不起效果 content-type
+    window.onload = function() {
+        axios({
+            url: 'https://localhost:8443/jsontest',
+            method: 'post',
+            params: {name: 'hello', des: 'world'},
+            // headers: {
+            //     'Content-Type': 'application/x-www-form-urlencoded'
+            // }
+        })
+    }
+
+</script>
+
+</body>
+</html>
